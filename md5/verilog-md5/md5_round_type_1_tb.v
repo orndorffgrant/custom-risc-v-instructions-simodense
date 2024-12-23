@@ -1,0 +1,86 @@
+module test;
+
+  reg [31:0] a_in, b_in, c_in, d_in, k_in;
+  reg [4:0] shift_amount;
+  reg [5:0] round_num;
+  reg [31:0] message [15:0];
+  wire [31:0] a_out, b_out, c_out, d_out;
+
+  wire [511:0] message_combined;
+  assign message_combined = {
+    message[15],
+    message[14],
+    message[13],
+    message[12],
+    message[11],
+    message[10],
+    message[9],
+    message[8],
+    message[7],
+    message[6],
+    message[5],
+    message[4],
+    message[3],
+    message[2],
+    message[1],
+    message[0]
+  };
+  
+  MD5RoundType1 UUT(
+    .a_in(a_in),
+    .b_in(b_in),
+    .c_in(c_in),
+    .d_in(d_in),
+    .k_in(k_in),
+    .shift_amount(shift_amount),
+    .round_num(round_num),
+    .message(message_combined),
+    .a_out(a_out),
+    .b_out(b_out),
+    .c_out(c_out),
+    .d_out(d_out)
+  );
+  
+  initial begin
+    $dumpfile("md5roundtype1.vcd");
+    $dumpvars(1);
+    
+    a_in = 32'h67452301;
+    b_in = 32'hefcdab89;
+    c_in = 32'h98badcfe;
+    d_in = 32'h10325476;
+    k_in = 32'hd76aa478;
+    shift_amount = 5'd7;
+    round_num = 0;
+    message[0] = 32'h00000000;
+    message[1] = 32'h11111111;
+    message[2] = 32'h22222222;
+    message[3] = 32'h33333333;
+    message[4] = 32'h44444444;
+    message[5] = 32'h55555555;
+    message[6] = 32'h66666666;
+    message[7] = 32'h77777777;
+    message[8] = 32'h88888888;
+    message[9] = 32'h99999999;
+    message[10] = 32'haaaaaaaa;
+    message[11] = 32'hbbbbbbbb;
+    message[12] = 32'hcccccccc;
+    message[13] = 32'hdddddddd;
+    message[14] = 32'heeeeeeee;
+    message[15] = 32'hffffffff;
+    #1;
+
+    $finish;
+  end
+  
+  initial begin
+    $monitor(
+      "a_out: %0h, b_out: %0h, c_out: %0h, d_out: %0h",
+      a_out,
+      b_out,
+      c_out,
+      d_out
+    );
+  end
+
+endmodule
